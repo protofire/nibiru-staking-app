@@ -6,8 +6,8 @@ import { useForm } from 'react-hook-form';
 import NumberField from '@/components/common/NumberField';
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
-import { encodeUnstake } from '@/utils/erisEvm';
 import { safeFormatUnits } from '@/utils/formatters';
+import { encodeUnstake } from '@/utils/nibiruEvm';
 import { validateDecimalLength, validateLimitedAmount } from '@/utils/validation';
 
 import { TxModalContext } from '../..';

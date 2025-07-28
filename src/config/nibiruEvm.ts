@@ -1,10 +1,10 @@
 import type { TokenInfo } from '@safe-global/safe-gateway-typescript-sdk';
 import { TokenType } from '@safe-global/safe-gateway-typescript-sdk';
 
-/** ERIS_EVM_ADDR: Proxy address for a contract points to an ErisEvm.sol impl */
-export const ERIS_EVM_ADDR = '0xF8647cB104e87fFf4B886dC6BB9F2F01596d400D';
+/** NIBIRU_EVM_ADDR: Proxy address for a contract points to an NibiruEvm.sol impl */
+export const NIBIRU_EVM_ADDR = '0xF8647cB104e87fFf4B886dC6BB9F2F01596d400D';
 
-export interface ErisEvmResponse {
+export interface NibiruEvmResponse {
   nibiBalance: string;
   stNibiBalance: string;
   unstakingRequests: UnstakingRequest[];
@@ -34,7 +34,7 @@ export const ST_NIBI_TOKEN: TokenInfo = {
   symbol: 'stNIBI',
   name: 'Staked Nibiru Token',
   logoUri: '/proto-logo.svg',
-  address: ERIS_EVM_ADDR, // The stNIBI is minted by the same contract
+  address: NIBIRU_EVM_ADDR, // The stNIBI is minted by the same contract
 };
 
 // Minimum staking amount (1 microNIBI = 10^12 wei)

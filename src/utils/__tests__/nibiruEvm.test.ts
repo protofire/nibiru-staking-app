@@ -1,31 +1,31 @@
-import { ERIS_EVM_ADDR } from '@/config/erisEvm';
+import { NIBIRU_EVM_ADDR } from '@/config/nibiruEvm';
 
 import {
-  encodeLiquidStake,
+  encodeStake,
   encodeUnstake,
   encodeRedeem,
   encodeGetStNibiBalance,
   encodeGetExchangeRate,
-} from '../erisEvm';
+} from '../nibiruEvm';
 
-describe('Eris EVM utilities', () => {
+describe('Nibiru EVM utilities', () => {
   const mockUserAddress = '0x1234567890123456789012345678901234567890';
 
-  describe('encodeLiquidStake', () => {
-    it('should encode liquid stake transaction', () => {
-      const result = encodeLiquidStake('420');
+  describe('encodeStake', () => {
+    it('should encode stake transaction', () => {
+      const result = encodeStake('420');
 
-      expect(result.to).toBe(ERIS_EVM_ADDR);
+      expect(result.to).toBe(NIBIRU_EVM_ADDR);
       expect(result.value).toBeDefined();
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });
 
     it('should throw error for zero amount', () => {
-      expect(() => encodeLiquidStake('0')).toThrow('Amount must be greater than 0');
+      expect(() => encodeStake('0')).toThrow('Amount must be greater than 0');
     });
 
     it('should throw error for empty amount', () => {
-      expect(() => encodeLiquidStake('')).toThrow('Amount must be greater than 0');
+      expect(() => encodeStake('')).toThrow('Amount must be greater than 0');
     });
   });
 
@@ -33,7 +33,7 @@ describe('Eris EVM utilities', () => {
     it('should encode unstake transaction', () => {
       const result = encodeUnstake('100');
 
-      expect(result.to).toBe(ERIS_EVM_ADDR);
+      expect(result.to).toBe(NIBIRU_EVM_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });
@@ -51,7 +51,7 @@ describe('Eris EVM utilities', () => {
     it('should encode redeem transaction', () => {
       const result = encodeRedeem();
 
-      expect(result.to).toBe(ERIS_EVM_ADDR);
+      expect(result.to).toBe(NIBIRU_EVM_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });
@@ -61,7 +61,7 @@ describe('Eris EVM utilities', () => {
     it('should encode balance query', () => {
       const result = encodeGetStNibiBalance(mockUserAddress);
 
-      expect(result.to).toBe(ERIS_EVM_ADDR);
+      expect(result.to).toBe(NIBIRU_EVM_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });
@@ -71,7 +71,7 @@ describe('Eris EVM utilities', () => {
     it('should encode exchange rate query', () => {
       const result = encodeGetExchangeRate();
 
-      expect(result.to).toBe(ERIS_EVM_ADDR);
+      expect(result.to).toBe(NIBIRU_EVM_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });

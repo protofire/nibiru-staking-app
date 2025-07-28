@@ -3,29 +3,29 @@ import { Deferrable } from '@ethersproject/properties';
 import type { SafeTransactionDataPartial } from '@safe-global/safe-core-sdk-types';
 import { Interface } from 'ethers';
 
-import { ERIS_EVM_ADDR } from '@/config/erisEvm';
+import { NIBIRU_EVM_ADDR } from '@/config/nibiruEvm';
 import { safeParseUnits } from '@/utils/formatters';
 
 /**
- * Encode liquid stake transaction
+ * Encode stake transaction
  * @param amount - Amount of NIBI to stake in string format (e.g., "420")
- * @returns Transaction data for liquid staking
+ * @returns Transaction data for staking
  */
-export const encodeLiquidStake = (amount: string): SafeTransactionDataPartial => {
+export const encodeStake = (amount: string): SafeTransactionDataPartial => {
   if (!amount || Number(amount) <= 0) {
     throw new Error('Amount must be greater than 0');
   }
 
   const functionABI = 'function liquidStake(uint256 amount) external';
-  const liquidStakeInterface = new Interface([functionABI]);
+  const stakeInterface = new Interface([functionABI]);
 
   // Convert amount to microNIBI (multiply by 10^12)
-  const liquidStakeAmount = safeParseUnits(amount, 18)?.toString() || '0';
+  const stakeAmount = safeParseUnits(amount, 18)?.toString() || '0';
 
   return {
-    to: ERIS_EVM_ADDR,
-    value: liquidStakeAmount, // Send NIBI as value
-    data: liquidStakeInterface.encodeFunctionData('liquidStake', [liquidStakeAmount]),
+    to: NIBIRU_EVM_ADDR,
+    value: stakeAmount, // Send NIBI as value
+    data: stakeInterface.encodeFunctionData('liquidStake', [stakeAmount]),
   };
 };
 
@@ -45,7 +45,7 @@ export const encodeUnstake = (stAmount: string): SafeTransactionDataPartial => {
   const parsedAmount = safeParseUnits(stAmount, 18)?.toString() || '0';
 
   return {
-    to: ERIS_EVM_ADDR,
+    to: NIBIRU_EVM_ADDR,
     value: '0',
     data: unstakeInterface.encodeFunctionData('unstake', [parsedAmount]),
   };
@@ -60,7 +60,7 @@ export const encodeRedeem = (): SafeTransactionDataPartial => {
   const redeemInterface = new Interface([functionABI]);
 
   return {
-    to: ERIS_EVM_ADDR,
+    to: NIBIRU_EVM_ADDR,
     value: '0',
     data: redeemInterface.encodeFunctionData('redeem', []),
   };
@@ -76,7 +76,7 @@ export const encodeGetStNibiBalance = (userAddress: string): Deferrable<Transact
   const balanceInterface = new Interface([functionABI]);
 
   return {
-    to: ERIS_EVM_ADDR,
+    to: NIBIRU_EVM_ADDR,
     value: '0',
     data: balanceInterface.encodeFunctionData('balanceOf', [userAddress]),
   };
@@ -93,7 +93,7 @@ export const encodeGetExchangeRate = (): Deferrable<TransactionRequest> => {
   const exchangeRateInterface = new Interface([functionABI]);
 
   return {
-    to: ERIS_EVM_ADDR,
+    to: NIBIRU_EVM_ADDR,
     value: '0',
     data: exchangeRateInterface.encodeFunctionData('getExchangeRate', []),
   };

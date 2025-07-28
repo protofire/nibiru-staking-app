@@ -5,17 +5,17 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { POLLING_INTERVAL } from '@/config/constants';
-import { type ErisEvmResponse } from '@/config/erisEvm';
-import { encodeGetStNibiBalance, encodeGetExchangeRate } from '@/utils/erisEvm';
+import { type NibiruEvmResponse } from '@/config/nibiruEvm';
+import { encodeGetStNibiBalance, encodeGetExchangeRate } from '@/utils/nibiruEvm';
 
 import useWeb3 from './useWeb3';
 
-export const useLoadErisEvm = (): UseQueryResult<ErisEvmResponse, Error> => {
+export const useLoadNibiruEvm = (): UseQueryResult<NibiruEvmResponse, Error> => {
   const { safe } = useSafeAppsSDK();
   const { web3: web3ReadOnly } = useWeb3();
 
-  const query = useQuery<ErisEvmResponse, Error>({
-    queryKey: ['erisEvm', safe.safeAddress, web3ReadOnly],
+  const query = useQuery<NibiruEvmResponse, Error>({
+    queryKey: ['nibiruEvm', safe.safeAddress, web3ReadOnly],
     queryFn: async () => {
       if (!safe.safeAddress || !web3ReadOnly) {
         return {
@@ -47,8 +47,8 @@ export const useLoadErisEvm = (): UseQueryResult<ErisEvmResponse, Error> => {
           canRedeem: false, // TODO: Implement if contract supports querying redeem status
         };
       } catch (error) {
-        console.error('Failed to fetch Eris EVM data:', error);
-        throw new Error('Failed to fetch liquid staking data');
+        console.error('Failed to fetch Nibiru EVM data:', error);
+        throw new Error('Failed to fetch staking data');
       }
     },
     refetchInterval: POLLING_INTERVAL,
@@ -57,11 +57,9 @@ export const useLoadErisEvm = (): UseQueryResult<ErisEvmResponse, Error> => {
 
   useEffect(() => {
     if (query.error) {
-      console.error('Eris EVM data fetch failed', query.error.message);
+      console.error('Nibiru EVM data fetch failed', query.error.message);
     }
   }, [query.error]);
 
   return query;
 };
-
-export default useLoadErisEvm;

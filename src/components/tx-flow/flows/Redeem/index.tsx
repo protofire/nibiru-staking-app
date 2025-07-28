@@ -4,7 +4,7 @@ import { useState, useContext } from 'react';
 
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
-import { encodeRedeem } from '@/utils/erisEvm';
+import { encodeRedeem } from '@/utils/nibiruEvm';
 
 import { TxModalContext } from '../..';
 
