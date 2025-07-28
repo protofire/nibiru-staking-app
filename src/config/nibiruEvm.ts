@@ -2,7 +2,7 @@ import type { TokenInfo } from '@safe-global/safe-gateway-typescript-sdk';
 import { TokenType } from '@safe-global/safe-gateway-typescript-sdk';
 
 /** NIBIRU_EVM_ADDR: Proxy address for a contract points to an NibiruEvm.sol impl */
-export const NIBIRU_EVM_ADDR = '0xF8647cB104e87fFf4B886dC6BB9F2F01596d400D';
+export const NIBIRU_EVM_ADDR = '0xC3f1D56537cdF1e777478F757f635311260A2fE9';
 
 export interface NibiruEvmResponse {
   nibiBalance: string;
