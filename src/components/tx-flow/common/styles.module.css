@@ -1,0 +1,18 @@
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.cardContent :global .errorMessage {
+  margin: 0;
+}
+
+.nestedDivider {
+  margin: 10px 0;
+}
+
+.form > :global(.MuiFormControl-root) {
+  margin-bottom: 28px;
+}
