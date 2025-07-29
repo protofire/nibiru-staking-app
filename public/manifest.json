@@ -1,7 +1,7 @@
 {
-  "short_name": "Nibiru Staking",
-  "name": "Nibiru Staking",
-  "description": "Nibiru Staking is a staking platform for Nibiru",
+  "short_name": "Nibiru Liquid Staking",
+  "name": "Nibiru Liquid Staking",
+  "description": "Liquid Staking safe app is a liquid staking platform for Nibiru",
   "icons": [
     {
       "src": "logo.svg",

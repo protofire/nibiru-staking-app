@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 import { POLLING_INTERVAL } from '@/config/constants';
 import { type NibiruEvmResponse } from '@/config/nibiruEvm';
-import { encodeGetStNibiBalance, encodeGetExchangeRate } from '@/utils/nibiruEvm';
+import { encodeGetStNibiBalance } from '@/utils/nibiruEvm';
 
 import useWeb3 from './useWeb3';
 
@@ -21,7 +21,6 @@ export const useLoadNibiruEvm = (): UseQueryResult<NibiruEvmResponse, Error> => 
         return {
           nibiBalance: '0',
           stNibiBalance: '0',
-          unstakingRequests: [],
           canRedeem: false,
         };
       }
@@ -30,21 +29,13 @@ export const useLoadNibiruEvm = (): UseQueryResult<NibiruEvmResponse, Error> => 
         // Get native NIBI balance
         const nibiBalance = await web3ReadOnly.getBalance(safe.safeAddress);
 
-        // Get stNIBI balance
+        // Get stNIBI balance from separate stNIBI token contract
         const stNibiBalanceCall = await web3ReadOnly.call(encodeGetStNibiBalance(safe.safeAddress));
-
-        // Get exchange rate (if available)
-        try {
-          await web3ReadOnly.call(encodeGetExchangeRate());
-        } catch {
-          console.warn('Could not fetch exchange rate, using default 1:1');
-        }
 
         return {
           nibiBalance: nibiBalance.toString(),
           stNibiBalance: stNibiBalanceCall || '0',
-          unstakingRequests: [], // TODO: Implement if contract supports querying unstaking requests
-          canRedeem: false, // TODO: Implement if contract supports querying redeem status
+          canRedeem: true, // TODO: Implement if contract supports querying redeem status
         };
       } catch (error) {
         console.error('Failed to fetch Nibiru EVM data:', error);

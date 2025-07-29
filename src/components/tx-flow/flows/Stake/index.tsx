@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form';
 import NumberField from '@/components/common/NumberField';
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
-import { MIN_STAKE_AMOUNT, toMicroNibi } from '@/config/nibiruEvm';
+import { MIN_STAKE_AMOUNT, toWei } from '@/config/nibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
 import { encodeStake } from '@/utils/nibiruEvm';
 import { validateDecimalLength, validateLimitedAmount } from '@/utils/validation';
@@ -60,7 +60,8 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
     }
 
     // Check minimum stake amount (1 microNIBI)
-    const microNibiAmount = toMicroNibi(numValue);
+    const microNibiAmount = toWei(numValue);
+
     if (microNibiAmount < MIN_STAKE_AMOUNT) {
       return 'Minimum stake amount is 1 microNIBI (0.000001 NIBI)';
     }

@@ -1,18 +1,7 @@
 'use client';
 
 import { TrendingUp, AccountBalance, Redeem as RedeemIcon } from '@mui/icons-material';
-import {
-  Typography,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  CircularProgress,
-  Container,
-  Chip,
-  Stack,
-} from '@mui/material';
+import { Typography, Box, Button, Card, CardContent, Grid, Container, Stack } from '@mui/material';
 import { useContext, ReactElement } from 'react';
 
 import TokenIcon from '@/components/common/TokenIcon';
@@ -24,7 +13,7 @@ import { useLoadNibiruEvm } from '@/hooks/useLoadNibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
 
 export default function Home(): ReactElement {
-  const { data: nibiruData, isLoading: loading } = useLoadNibiruEvm();
+  const { data: nibiruData } = useLoadNibiruEvm();
   const { setTxFlow } = useContext(TxModalContext);
 
   const onStakeClick = (): void => {
@@ -45,26 +34,6 @@ export default function Home(): ReactElement {
     }
   };
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg">
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="60vh"
-          flexDirection="column"
-          gap={3}
-        >
-          <CircularProgress size={60} sx={{ color: 'var(--color-primary-main)' }} />
-          <Typography variant="h6" color="text.secondary">
-            Loading your staking data...
-          </Typography>
-        </Box>
-      </Container>
-    );
-  }
-
   return (
     <Container maxWidth="lg">
       <Box py={4}>
@@ -83,7 +52,7 @@ export default function Home(): ReactElement {
               mb: 2,
             }}
           >
-            Nibiru Staking
+            Nibiru Liquid Staking
           </Typography>
           <Typography
             variant="h6"
@@ -92,15 +61,6 @@ export default function Home(): ReactElement {
           >
             Stake your NIBI tokens to earn rewards while maintaining liquidity with stNIBI tokens.
           </Typography>
-          <Chip
-            label="Powered by Nibiru Protocol"
-            variant="outlined"
-            sx={{
-              mt: 2,
-              borderColor: 'var(--color-primary-main)',
-              color: 'var(--color-primary-main)',
-            }}
-          />
         </Box>
 
         {/* Staking Cards */}
@@ -121,7 +81,7 @@ export default function Home(): ReactElement {
                 },
               }}
             >
-              <CardContent sx={{ p: 3 }}>
+              <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                   <Box
                     sx={{
@@ -133,10 +93,7 @@ export default function Home(): ReactElement {
                       justifyContent: 'center',
                     }}
                   >
-                    <TokenIcon
-                      logoUri="/0x4300000000000000000000000000000000000002.png"
-                      tokenSymbol="NIBI"
-                    />
+                    <TokenIcon logoUri="/logo192.png" tokenSymbol="NIBI" />
                   </Box>
                   <Box>
                     <Typography variant="h6" fontWeight="bold">
@@ -153,8 +110,10 @@ export default function Home(): ReactElement {
                   fontWeight="bold"
                   sx={{ mb: 3, color: 'var(--color-primary-main)' }}
                 >
-                  {safeFormatUnits(nibiruData?.nibiBalance || '0', 18)}
+                  {safeFormatUnits(nibiruData?.nibiBalance || '0', 18, true)}
                 </Typography>
+
+                <Box sx={{ flexGrow: 1 }} />
 
                 <Button
                   variant="contained"
@@ -196,7 +155,7 @@ export default function Home(): ReactElement {
                 },
               }}
             >
-              <CardContent sx={{ p: 3 }}>
+              <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                   <Box
                     sx={{
@@ -221,8 +180,10 @@ export default function Home(): ReactElement {
                 </Stack>
 
                 <Typography variant="h3" fontWeight="bold" sx={{ mb: 3, color: '#ffffff' }}>
-                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', 18)}
+                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', 18, true)}
                 </Typography>
+
+                <Box sx={{ flexGrow: 1 }} />
 
                 <Button
                   variant="outlined"
@@ -267,7 +228,7 @@ export default function Home(): ReactElement {
                 },
               }}
             >
-              <CardContent sx={{ p: 3 }}>
+              <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <Stack direction="row" alignItems="center" spacing={2} mb={3}>
                   <Box
                     sx={{
@@ -303,6 +264,8 @@ export default function Home(): ReactElement {
                   Redeem unstaked tokens to receive NIBI + rewards as WNIBI
                 </Typography>
 
+                <Box sx={{ flexGrow: 1 }} />
+
                 <Button
                   variant="contained"
                   color="success"
@@ -329,118 +292,6 @@ export default function Home(): ReactElement {
             </Card>
           </Grid>
         </Grid>
-
-        {/* Information Section */}
-        <Card
-          sx={{
-            background: 'rgba(28, 28, 28, 0.8)',
-            border: '1px solid rgba(99, 102, 105, 0.2)',
-            backdropFilter: 'blur(10px)',
-          }}
-        >
-          <CardContent sx={{ p: 4 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              textAlign="center"
-              sx={{ mb: 4, fontWeight: 'bold' }}
-            >
-              How Staking Works
-            </Typography>
-
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={4}>
-                <Box textAlign="center">
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      color: 'black',
-                    }}
-                  >
-                    1
-                  </Box>
-                  <Typography variant="h5" gutterBottom fontWeight="bold">
-                    Stake
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                    Deposit NIBI to mint stNIBI. Your stNIBI represents your staked NIBI plus any
-                    accrued rewards.
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <Box textAlign="center">
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #636669 0%, #303033 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      color: 'white',
-                    }}
-                  >
-                    2
-                  </Box>
-                  <Typography variant="h5" gutterBottom fontWeight="bold">
-                    Unstake
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                    Queue your stNIBI for unstaking. There may be an unstaking period before you can
-                    redeem.
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <Box textAlign="center">
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #00b460 0%, #028d4c 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      color: 'white',
-                    }}
-                  >
-                    3
-                  </Box>
-                  <Typography variant="h5" gutterBottom fontWeight="bold">
-                    Redeem
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                    Once the unstaking period is complete, redeem your tokens to receive NIBI +
-                    rewards as WNIBI.
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
       </Box>
     </Container>
   );

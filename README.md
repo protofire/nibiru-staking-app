@@ -1,4 +1,4 @@
-# Nibiru Staking Safe App
+# Nibiru Liquid Staking Safe App
 
 A Safe app for interacting with the Nibiru EVM staking contract on Nibiru. This application allows users to stake NIBI tokens, unstake stNIBI tokens, and redeem unstaked tokens through the Safe multisig interface.
 
@@ -10,7 +10,7 @@ A Safe app for interacting with the Nibiru EVM staking contract on Nibiru. This 
 
 ## Contract Integration
 
-The app integrates with the Nibiru EVM contract at address `0xF8647cB104e87fFf4B886dC6BB9F2F01596d400D` which provides three main functions:
+The app integrates with the Nibiru EVM contract which provides three main functions:
 
 ```solidity
 contract NibiruEvm {

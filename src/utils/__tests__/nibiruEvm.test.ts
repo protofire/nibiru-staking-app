@@ -1,11 +1,13 @@
-import { NIBIRU_EVM_ADDR } from '@/config/nibiruEvm';
+import { NIBIRU_EVM_ADDR, ST_NIBI_TOKEN_ADDR } from '@/config/nibiruEvm';
 
 import {
   encodeStake,
   encodeUnstake,
   encodeRedeem,
   encodeGetStNibiBalance,
-  encodeGetExchangeRate,
+  encodeGetStNibiAllowance,
+  encodeStNibiApprove,
+  encodeStNibiTransfer,
 } from '../nibiruEvm';
 
 describe('Nibiru EVM utilities', () => {
@@ -61,19 +63,63 @@ describe('Nibiru EVM utilities', () => {
     it('should encode balance query', () => {
       const result = encodeGetStNibiBalance(mockUserAddress);
 
-      expect(result.to).toBe(NIBIRU_EVM_ADDR);
+      expect(result.to).toBe(ST_NIBI_TOKEN_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
     });
   });
 
-  describe('encodeGetExchangeRate', () => {
-    it('should encode exchange rate query', () => {
-      const result = encodeGetExchangeRate();
+  describe('encodeGetStNibiAllowance', () => {
+    it('should encode allowance query', () => {
+      const result = encodeGetStNibiAllowance(mockUserAddress, NIBIRU_EVM_ADDR);
 
-      expect(result.to).toBe(NIBIRU_EVM_ADDR);
+      expect(result.to).toBe(ST_NIBI_TOKEN_ADDR);
       expect(result.value).toBe('0');
       expect(result.data).toContain('0x'); // Should contain encoded function call
+    });
+  });
+
+  describe('encodeStNibiApprove', () => {
+    it('should encode approve transaction', () => {
+      const result = encodeStNibiApprove(NIBIRU_EVM_ADDR, '100');
+
+      expect(result.to).toBe(ST_NIBI_TOKEN_ADDR);
+      expect(result.value).toBe('0');
+      expect(result.data).toContain('0x'); // Should contain encoded function call
+    });
+
+    it('should throw error for zero amount', () => {
+      expect(() => encodeStNibiApprove(NIBIRU_EVM_ADDR, '0')).toThrow(
+        'Amount must be greater than 0'
+      );
+    });
+
+    it('should throw error for empty amount', () => {
+      expect(() => encodeStNibiApprove(NIBIRU_EVM_ADDR, '')).toThrow(
+        'Amount must be greater than 0'
+      );
+    });
+  });
+
+  describe('encodeStNibiTransfer', () => {
+    it('should encode transfer transaction', () => {
+      const result = encodeStNibiTransfer(mockUserAddress, '50');
+
+      expect(result.to).toBe(ST_NIBI_TOKEN_ADDR);
+      expect(result.value).toBe('0');
+      expect(result.data).toContain('0x'); // Should contain encoded function call
+    });
+
+    it('should throw error for zero amount', () => {
+      expect(() => encodeStNibiTransfer(mockUserAddress, '0')).toThrow(
+        'Amount must be greater than 0'
+      );
+    });
+
+    it('should throw error for empty amount', () => {
+      expect(() => encodeStNibiTransfer(mockUserAddress, '')).toThrow(
+        'Amount must be greater than 0'
+      );
     });
   });
 });

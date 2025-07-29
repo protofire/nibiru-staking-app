@@ -2,12 +2,14 @@ import type { TokenInfo } from '@safe-global/safe-gateway-typescript-sdk';
 import { TokenType } from '@safe-global/safe-gateway-typescript-sdk';
 
 /** NIBIRU_EVM_ADDR: Proxy address for a contract points to an NibiruEvm.sol impl */
-export const NIBIRU_EVM_ADDR = '0xC3f1D56537cdF1e777478F757f635311260A2fE9';
+export const NIBIRU_EVM_ADDR = '0x38039867f99B18bf2b14C592A5cb4791403C2C12';
+
+/** ST_NIBI_TOKEN_ADDR: Mock address for the stNIBI ERC20 token contract */
+export const ST_NIBI_TOKEN_ADDR = '0x62C054E4D7f8e066596Cd7A55DB0881E529ec00C';
 
 export interface NibiruEvmResponse {
   nibiBalance: string;
   stNibiBalance: string;
-  unstakingRequests: UnstakingRequest[];
   canRedeem: boolean;
 }
 
@@ -34,13 +36,13 @@ export const ST_NIBI_TOKEN: TokenInfo = {
   symbol: 'stNIBI',
   name: 'Staked Nibiru Token',
   logoUri: '/proto-logo.svg',
-  address: NIBIRU_EVM_ADDR, // The stNIBI is minted by the same contract
+  address: ST_NIBI_TOKEN_ADDR, // Separate ERC20 token contract for stNIBI
 };
 
 // Minimum staking amount (1 microNIBI = 10^12 wei)
-export const MIN_STAKE_AMOUNT = BigInt(1e12);
+export const MIN_STAKE_AMOUNT = 1e12;
 
 // Convert amount to microNIBI (multiply by 10^12)
-export const toMicroNibi = (amount: number): bigint => {
-  return BigInt(amount) * BigInt(1e12);
+export const toWei = (amount: number): number => {
+  return amount * 1e18;
 };
