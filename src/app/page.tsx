@@ -44,7 +44,7 @@ export default function Home(): ReactElement {
             component="h1"
             gutterBottom
             sx={{
-              background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
+              background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -71,13 +71,13 @@ export default function Home(): ReactElement {
               sx={{
                 height: '100%',
                 background:
-                  'linear-gradient(135deg, rgba(18, 255, 128, 0.1) 0%, rgba(12, 178, 89, 0.05) 100%)',
-                border: '1px solid rgba(18, 255, 128, 0.2)',
+                  'linear-gradient(135deg, rgba(29, 233, 182, 0.1) 0%, rgba(8, 145, 178, 0.05) 100%)',
+                border: '1px solid rgba(29, 233, 182, 0.2)',
                 backdropFilter: 'blur(10px)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   transform: 'translateY(-4px)',
-                  boxShadow: '0 20px 40px rgba(18, 255, 128, 0.1)',
+                  boxShadow: '0 20px 40px rgba(29, 233, 182, 0.1)',
                 },
               }}
             >
@@ -87,7 +87,7 @@ export default function Home(): ReactElement {
                     sx={{
                       p: 1.5,
                       borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
+                      background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -124,9 +124,9 @@ export default function Home(): ReactElement {
                   startIcon={<TrendingUp />}
                   sx={{
                     py: 1.5,
-                    background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
+                    background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #0cb259 0%, #12ff80 100%)',
+                      background: 'linear-gradient(135deg, #1de9b6 0%, #0ea5e9 100%)',
                     },
                     '&:disabled': {
                       background: 'rgba(99, 102, 105, 0.3)',
@@ -218,13 +218,13 @@ export default function Home(): ReactElement {
               sx={{
                 height: '100%',
                 background:
-                  'linear-gradient(135deg, rgba(0, 180, 96, 0.1) 0%, rgba(2, 141, 76, 0.05) 100%)',
-                border: '1px solid rgba(0, 180, 96, 0.2)',
+                  'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(2, 132, 199, 0.05) 100%)',
+                border: '1px solid rgba(14, 165, 233, 0.2)',
                 backdropFilter: 'blur(10px)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   transform: 'translateY(-4px)',
-                  boxShadow: '0 20px 40px rgba(0, 180, 96, 0.1)',
+                  boxShadow: '0 20px 40px rgba(14, 165, 233, 0.1)',
                 },
               }}
             >
@@ -234,7 +234,7 @@ export default function Home(): ReactElement {
                     sx={{
                       p: 1.5,
                       borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #00b460 0%, #028d4c 100%)',
+                      background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -277,11 +277,11 @@ export default function Home(): ReactElement {
                   sx={{
                     py: 1.5,
                     background: nibiruData?.canRedeem
-                      ? 'linear-gradient(135deg, #00b460 0%, #028d4c 100%)'
+                      ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
                       : 'rgba(99, 102, 105, 0.3)',
                     '&:hover': {
                       background: nibiruData?.canRedeem
-                        ? 'linear-gradient(135deg, #028d4c 0%, #00b460 100%)'
+                        ? 'linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%)'
                         : 'rgba(99, 102, 105, 0.3)',
                     },
                   }}

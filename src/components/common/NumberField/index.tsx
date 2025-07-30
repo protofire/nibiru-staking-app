@@ -34,11 +34,24 @@ export const _formatNumber = (value: string): string => {
 };
 
 const NumberField = forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ onChange, ...props }, ref): ReactElement => {
+  ({ onChange, value, InputLabelProps, ...props }, ref): ReactElement => {
+    const hasValue = Boolean(value && String(value).length > 0);
+
+    // Hide label if input has value AND is focused
+    const shouldHideLabel = !hasValue;
+
     return (
       <TextField
         autoComplete="off"
         ref={ref}
+        value={value}
+        InputLabelProps={{
+          shrink: shouldHideLabel,
+          style: {
+            ...InputLabelProps?.style,
+          },
+          ...InputLabelProps,
+        }}
         onChange={(event) => {
           event.target.value = _formatNumber(event.target.value);
           return onChange?.(event);

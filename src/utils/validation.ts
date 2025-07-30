@@ -1,19 +1,4 @@
-import { isChecksummedAddress } from './addresses';
 import { safeFormatUnits, safeParseUnits } from './formatters';
-
-export const validateAddress = (address: string): string | undefined => {
-  const ADDRESS_RE = /^0x[0-9a-f]{40}$/i;
-
-  if (!ADDRESS_RE.test(address)) {
-    return 'Invalid address format';
-  }
-
-  if (!isChecksummedAddress(address)) {
-    return 'Invalid address checksum';
-  }
-
-  return undefined;
-};
 
 export const validateAmount = (
   amount?: string,

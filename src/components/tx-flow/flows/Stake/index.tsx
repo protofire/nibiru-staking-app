@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form';
 import NumberField from '@/components/common/NumberField';
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
-import { MIN_STAKE_AMOUNT, toWei } from '@/config/nibiruEvm';
+import { MIN_STAKE_AMOUNT } from '@/config/nibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
 import { encodeStake } from '@/utils/nibiruEvm';
 import { validateDecimalLength, validateLimitedAmount } from '@/utils/validation';
@@ -59,10 +59,9 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
       return 'Amount must be greater than 0';
     }
 
-    // Check minimum stake amount (1 microNIBI)
-    const microNibiAmount = toWei(numValue);
+    const nibiAmount = numValue * 1e18;
 
-    if (microNibiAmount < MIN_STAKE_AMOUNT) {
+    if (nibiAmount < MIN_STAKE_AMOUNT) {
       return 'Minimum stake amount is 1 microNIBI (0.000001 NIBI)';
     }
 
@@ -108,13 +107,13 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
                 sx={{
                   p: 1.5,
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <TrendingUp sx={{ color: 'black', fontSize: 24 }} />
+                <TrendingUp sx={{ color: 'white', fontSize: 24 }} />
               </Box>
               <Box>
                 <Typography variant="h4" fontWeight={700}>
@@ -125,9 +124,9 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
                   size="small"
                   sx={{
                     mt: 0.5,
-                    background: 'rgba(18, 255, 128, 0.1)',
+                    background: 'rgba(29, 233, 182, 0.1)',
                     color: 'var(--color-primary-main)',
-                    border: '1px solid rgba(18, 255, 128, 0.3)',
+                    border: '1px solid rgba(29, 233, 182, 0.3)',
                   }}
                 />
               </Box>
@@ -138,8 +137,8 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
               icon={<Info />}
               sx={{
                 mb: 3,
-                background: 'rgba(95, 221, 255, 0.1)',
-                border: '1px solid rgba(95, 221, 255, 0.3)',
+                background: 'rgba(29, 233, 182, 0.1)',
+                border: '1px solid rgba(29, 233, 182, 0.3)',
                 '& .MuiAlert-icon': {
                   color: 'var(--color-info-main)',
                 },
@@ -161,11 +160,11 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
                       size="small"
                       onClick={onMaxAmountClick}
                       sx={{
-                        background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
-                        color: 'black',
+                        background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
+                        color: 'white',
                         fontWeight: 'bold',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #0cb259 0%, #12ff80 100%)',
+                          background: 'linear-gradient(135deg, #1de9b6 0%, #0ea5e9 100%)',
                         },
                       }}
                     >
@@ -206,9 +205,9 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
                   label={`≈ ${amount} stNIBI`}
                   size="small"
                   sx={{
-                    background: 'rgba(18, 255, 128, 0.1)',
+                    background: 'rgba(29, 233, 182, 0.1)',
                     color: 'var(--color-primary-main)',
-                    border: '1px solid rgba(18, 255, 128, 0.3)',
+                    border: '1px solid rgba(29, 233, 182, 0.3)',
                   }}
                 />
               )}
@@ -227,14 +226,14 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
               startIcon={isSubmitting ? <LinearProgress /> : <TrendingUp />}
               sx={{
                 py: 1.5,
-                background: 'linear-gradient(135deg, #12ff80 0%, #0cb259 100%)',
-                color: 'black',
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
+                color: 'white',
                 fontWeight: 'bold',
                 fontSize: '1.1rem',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #0cb259 0%, #12ff80 100%)',
+                  background: 'linear-gradient(135deg, #1de9b6 0%, #0ea5e9 100%)',
                   transform: 'translateY(-2px)',
-                  boxShadow: '0 10px 30px rgba(18, 255, 128, 0.3)',
+                  boxShadow: '0 10px 30px rgba(29, 233, 182, 0.3)',
                 },
                 '&:disabled': {
                   background: 'rgba(99, 102, 105, 0.3)',

@@ -22,33 +22,33 @@ body {
 
 :root {
   --color-text-primary: #ffffff;
-  --color-text-secondary: #636669;
-  --color-text-disabled: #636669;
-  --color-primary-dark: #0cb259;
-  --color-primary-main: #12ff80;
-  --color-primary-light: #a1a3a7;
-  --color-secondary-dark: #636669;
-  --color-secondary-main: #ffffff;
-  --color-secondary-light: #12ff80;
-  --color-secondary-background: #1b2a22;
-  --color-border-main: #636669;
-  --color-border-light: #303033;
-  --color-border-background: #121312;
-  --color-error-dark: #ac2c3b;
-  --color-error-main: #ff5f72;
-  --color-error-light: #ffb4bd;
-  --color-error-background: #2f2527;
-  --color-success-dark: #028d4c;
-  --color-success-main: #00b460;
-  --color-success-light: #81c784;
+  --color-text-secondary: #9ca3af;
+  --color-text-disabled: #6b7280;
+  --color-primary-dark: #0891b2;
+  --color-primary-main: #1de9b6;
+  --color-primary-light: #67e8f9;
+  --color-secondary-dark: #0284c7;
+  --color-secondary-main: #0ea5e9;
+  --color-secondary-light: #7dd3fc;
+  --color-secondary-background: #1e293b;
+  --color-border-main: #6b7280;
+  --color-border-light: #374151;
+  --color-border-background: #111827;
+  --color-error-dark: #dc2626;
+  --color-error-main: #ef4444;
+  --color-error-light: #fca5a5;
+  --color-error-background: #2d1b1f;
+  --color-success-dark: #0891b2;
+  --color-success-main: #1de9b6;
+  --color-success-light: #67e8f9;
   --color-success-background: #1f2920;
-  --color-info-dark: #52bfdc;
-  --color-info-main: #5fddff;
-  --color-info-light: #b7f0ff;
+  --color-info-dark: #0891b2;
+  --color-info-main: #1de9b6;
+  --color-info-light: #67e8f9;
   --color-info-background: #19252c;
-  --color-warning-dark: #c04c32;
-  --color-warning-main: #ff8061;
-  --color-warning-light: #ffbc9f;
+  --color-warning-dark: #0891b2;
+  --color-warning-main: #1de9b6;
+  --color-warning-light: #67e8f9;
   --color-warning-background: #2f2318;
   --color-background-default: #121312;
   --color-background-main: #121312;
@@ -56,8 +56,8 @@ body {
   --color-background-light: #1b2a22;
   --color-backdrop-main: #636669;
   --color-logo-main: #ffffff;
-  --color-logo-background: #303033;
-  --color-static-main: #121312;
+  --color-logo-background: #374151;
+  --color-static-main: #0f172a;
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -217,7 +217,7 @@ body.beamerAnnouncementBarTopActive {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(18, 255, 128, 0.2),
+    rgba(29, 233, 182, 0.2),
     transparent
   );
   background-size: 200px 100%;
@@ -231,14 +231,14 @@ body.beamerAnnouncementBarTopActive {
 
 .card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 50px rgba(18, 255, 128, 0.15);
+  box-shadow: 0 25px 50px rgba(29, 233, 182, 0.15);
 }
 
 /* Button enhancements */
 .gradient-button {
-  background: linear-gradient(135deg, #12ff80 0%, #0cb259 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%);
   border: none;
-  color: black;
+  color: white;
   font-weight: bold;
   position: relative;
   overflow: hidden;
@@ -281,10 +281,10 @@ body.beamerAnnouncementBarTopActive {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #12ff80 0%, #0cb259 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #0cb259 0%, #12ff80 100%);
+  background: linear-gradient(135deg, #1de9b6 0%, #0ea5e9 100%);
 }

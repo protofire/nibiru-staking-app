@@ -1,37 +1,8 @@
-import { isChecksummedAddress } from '../addresses';
-import {
-  validateAddress,
-  validateAmount,
-  validateLimitedAmount,
-  validateDecimalLength,
-} from '../validation';
+import { validateAmount, validateLimitedAmount, validateDecimalLength } from '../validation';
 
 jest.mock('../addresses', () => ({
   isChecksummedAddress: jest.fn(),
 }));
-
-describe('validateAddress', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should return undefined for valid checksummed address', () => {
-    const validAddress = '0x1234567890123456789012345678901234567890';
-    (isChecksummedAddress as jest.Mock).mockReturnValue(true);
-    expect(validateAddress(validAddress)).toBeUndefined();
-  });
-
-  it('should return error for invalid address format', () => {
-    const invalidAddress = '0xinvalid';
-    expect(validateAddress(invalidAddress)).toBe('Invalid address format');
-  });
-
-  it('should return error for invalid checksum', () => {
-    const address = '0x1234567890123456789012345678901234567890';
-    (isChecksummedAddress as jest.Mock).mockReturnValue(false);
-    expect(validateAddress(address)).toBe('Invalid address checksum');
-  });
-});
 
 describe('validateAmount', () => {
   it('should return undefined for valid positive amount', () => {

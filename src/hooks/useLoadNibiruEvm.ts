@@ -5,10 +5,15 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { POLLING_INTERVAL } from '@/config/constants';
-import { type NibiruEvmResponse } from '@/config/nibiruEvm';
 import { encodeGetStNibiBalance } from '@/utils/nibiruEvm';
 
 import useWeb3 from './useWeb3';
+
+export interface NibiruEvmResponse {
+  nibiBalance: string;
+  stNibiBalance: string;
+  canRedeem: boolean;
+}
 
 export const useLoadNibiruEvm = (): UseQueryResult<NibiruEvmResponse, Error> => {
   const { safe } = useSafeAppsSDK();
