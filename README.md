@@ -33,13 +33,13 @@ contract NibiruEvm {
 First, install dependencies:
 
 ```bash
-npm install
+yarn install
 ```
 
 Run the development server:
 
 ```bash
-npm run dev
+yarn run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -67,13 +67,13 @@ The project structure:
 Run tests:
 
 ```bash
-npm test
+yarn test
 ```
 
 Run tests in watch mode:
 
 ```bash
-npm run test:watch
+yarn run test:watch
 ```
 
 ## Building
@@ -81,5 +81,5 @@ npm run test:watch
 Build the application:
 
 ```bash
-npm run build
+yarn run build
 ```

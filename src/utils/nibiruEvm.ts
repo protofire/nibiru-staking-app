@@ -3,27 +3,32 @@ import { Deferrable } from '@ethersproject/properties';
 import type { SafeTransactionDataPartial } from '@safe-global/safe-core-sdk-types';
 import { Interface } from 'ethers';
 
-import { NIBIRU_EVM_ADDR, ST_NIBI_TOKEN_ADDR } from '@/config/nibiruEvm';
+import { NIBIRU_EVM_ADDRESSES, ST_NIBI_TOKEN_ADDRESSES } from '@/config/nibiruEvm';
 import { safeParseUnits } from '@/utils/formatters';
 
 /**
  * Encode stake transaction
  * @param amount - Amount of NIBI to stake in string format (e.g., "420")
+ * @param chainId - The chain ID of the network
  * @returns Transaction data for staking
  */
-export const encodeStake = (amount: string): SafeTransactionDataPartial => {
+export const encodeStake = (amount: string, chainId: number): SafeTransactionDataPartial => {
   if (!amount || Number(amount) <= 0) {
     throw new Error('Amount must be greater than 0');
   }
 
-  const functionABI = 'function liquidStake(uint256 amount) external';
+  const functionABI = 'function liquidStake(uint256 amount)';
   const stakeInterface = new Interface([functionABI]);
 
-  // Convert amount to microNIBI (multiply by 10^12)
   const stakeAmount = safeParseUnits(amount, 18)?.toString() || '0';
 
+  const contractAddress = NIBIRU_EVM_ADDRESSES[chainId as keyof typeof NIBIRU_EVM_ADDRESSES];
+  if (!contractAddress) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
   return {
-    to: NIBIRU_EVM_ADDR,
+    to: contractAddress,
     value: '0',
     data: stakeInterface.encodeFunctionData('liquidStake', [stakeAmount]),
   };
@@ -32,20 +37,26 @@ export const encodeStake = (amount: string): SafeTransactionDataPartial => {
 /**
  * Encode unstake transaction
  * @param stAmount - Amount of stNIBI to unstake in string format
+ * @param chainId - The chain ID of the network
  * @returns Transaction data for unstaking
  */
-export const encodeUnstake = (stAmount: string): SafeTransactionDataPartial => {
+export const encodeUnstake = (stAmount: string, chainId: number): SafeTransactionDataPartial => {
   if (!stAmount || Number(stAmount) <= 0) {
     throw new Error('stAmount must be greater than 0');
   }
 
-  const functionABI = 'function unstake(uint256 stAmount) external';
+  const functionABI = 'function unstake(uint256 stAmount)';
   const unstakeInterface = new Interface([functionABI]);
 
   const parsedAmount = safeParseUnits(stAmount, 18)?.toString() || '0';
 
+  const contractAddress = NIBIRU_EVM_ADDRESSES[chainId as keyof typeof NIBIRU_EVM_ADDRESSES];
+  if (!contractAddress) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
   return {
-    to: NIBIRU_EVM_ADDR,
+    to: contractAddress,
     value: '0',
     data: unstakeInterface.encodeFunctionData('unstake', [parsedAmount]),
   };
@@ -53,14 +64,20 @@ export const encodeUnstake = (stAmount: string): SafeTransactionDataPartial => {
 
 /**
  * Encode redeem transaction
+ * @param chainId - The chain ID of the network
  * @returns Transaction data for redeeming unstaked tokens
  */
-export const encodeRedeem = (): SafeTransactionDataPartial => {
-  const functionABI = 'function redeem() external';
+export const encodeRedeem = (chainId: number): SafeTransactionDataPartial => {
+  const functionABI = 'function redeem()';
   const redeemInterface = new Interface([functionABI]);
 
+  const contractAddress = NIBIRU_EVM_ADDRESSES[chainId as keyof typeof NIBIRU_EVM_ADDRESSES];
+  if (!contractAddress) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
   return {
-    to: NIBIRU_EVM_ADDR,
+    to: contractAddress,
     value: '0',
     data: redeemInterface.encodeFunctionData('redeem', []),
   };
@@ -71,12 +88,15 @@ export const encodeRedeem = (): SafeTransactionDataPartial => {
  * @param userAddress - Address to check balance for
  * @returns Transaction request for balance query
  */
-export const encodeGetStNibiBalance = (userAddress: string): Deferrable<TransactionRequest> => {
+export const encodeGetStNibiBalance = (
+  userAddress: string,
+  chainId: number
+): Deferrable<TransactionRequest> => {
   const functionABI = 'function balanceOf(address account) external view returns (uint256)';
   const balanceInterface = new Interface([functionABI]);
 
   return {
-    to: ST_NIBI_TOKEN_ADDR,
+    to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
     value: '0',
     data: balanceInterface.encodeFunctionData('balanceOf', [userAddress]),
   };
@@ -90,14 +110,15 @@ export const encodeGetStNibiBalance = (userAddress: string): Deferrable<Transact
  */
 export const encodeGetStNibiAllowance = (
   owner: string,
-  spender: string
+  spender: string,
+  chainId: number
 ): Deferrable<TransactionRequest> => {
   const functionABI =
     'function allowance(address owner, address spender) external view returns (uint256)';
   const allowanceInterface = new Interface([functionABI]);
 
   return {
-    to: ST_NIBI_TOKEN_ADDR,
+    to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
     value: '0',
     data: allowanceInterface.encodeFunctionData('allowance', [owner, spender]),
   };
@@ -111,7 +132,8 @@ export const encodeGetStNibiAllowance = (
  */
 export const encodeStNibiApprove = (
   spender: string,
-  amount: string
+  amount: string,
+  chainId: number
 ): SafeTransactionDataPartial => {
   if (!amount || Number(amount) <= 0) {
     throw new Error('Amount must be greater than 0');
@@ -123,31 +145,8 @@ export const encodeStNibiApprove = (
   const parsedAmount = safeParseUnits(amount, 18)?.toString() || '0';
 
   return {
-    to: ST_NIBI_TOKEN_ADDR,
+    to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
     value: '0',
     data: approveInterface.encodeFunctionData('approve', [spender, parsedAmount]),
-  };
-};
-
-/**
- * Encode transfer transaction for stNIBI token
- * @param to - Recipient address
- * @param amount - Amount to transfer in string format
- * @returns Transaction data for transfer
- */
-export const encodeStNibiTransfer = (to: string, amount: string): SafeTransactionDataPartial => {
-  if (!amount || Number(amount) <= 0) {
-    throw new Error('Amount must be greater than 0');
-  }
-
-  const functionABI = 'function transfer(address to, uint256 amount) external returns (bool)';
-  const transferInterface = new Interface([functionABI]);
-
-  const parsedAmount = safeParseUnits(amount, 18)?.toString() || '0';
-
-  return {
-    to: ST_NIBI_TOKEN_ADDR,
-    value: '0',
-    data: transferInterface.encodeFunctionData('transfer', [to, parsedAmount]),
   };
 };

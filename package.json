@@ -13,7 +13,8 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:script": "ts-node test.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -22,6 +23,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
+    "@nibiruchain/evm-core": "^0.1.0",
     "@safe-global/protocol-kit": "^4.0.4",
     "@safe-global/safe-apps-provider": "^0.18.3",
     "@safe-global/safe-apps-react-sdk": "^4.7.2",

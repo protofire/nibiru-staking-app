@@ -2,10 +2,12 @@ import { Box, Typography, Divider, Button, InputAdornment } from '@mui/material'
 import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk';
 import { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
+import { parseUnits } from 'viem';
 
 import NumberField from '@/components/common/NumberField';
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
+import { MIN_STAKE_AMOUNT, STNIBI_DECIMALS } from '@/config/nibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
 import { encodeUnstake } from '@/utils/nibiruEvm';
 import { validateDecimalLength, validateLimitedAmount } from '@/utils/validation';
@@ -21,7 +23,7 @@ export interface UnstakeFlowProps {
 }
 
 const UnstakeFlow = ({ stNibiBalance }: UnstakeFlowProps): React.ReactElement => {
-  const { sdk } = useSafeAppsSDK();
+  const { sdk, safe } = useSafeAppsSDK();
   const { setTxFlow } = useContext(TxModalContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,18 +43,31 @@ const UnstakeFlow = ({ stNibiBalance }: UnstakeFlowProps): React.ReactElement =>
   const maxAmount = stNibiBalance;
 
   const validateAmount = (value: string): string | true => {
-    const numValue = Number(value);
-
-    if (numValue <= 0) {
+    if (!value || Number(value) <= 0) {
       return 'Amount must be greater than 0';
     }
 
-    const limitValidation = validateLimitedAmount(value, 18, maxAmount);
+    try {
+      const amountInBaseUnits = parseUnits(value, STNIBI_DECIMALS);
+      const minStakeInStNibiDecimals = BigInt(MIN_STAKE_AMOUNT) / BigInt(1e12); // Convert from 18-decimal to 6-decimal
+
+      if (amountInBaseUnits < minStakeInStNibiDecimals) {
+        return `Minimum unstake amount is 1 microNIBI (0.000001 NIBI)`;
+      }
+
+      if (amountInBaseUnits % minStakeInStNibiDecimals !== BigInt(0)) {
+        return `Amount must be in multiples of 1 microNIBI (0.000001 NIBI)`;
+      }
+    } catch {
+      return 'Invalid amount';
+    }
+
+    const limitValidation = validateLimitedAmount(value, STNIBI_DECIMALS, maxAmount);
     if (typeof limitValidation === 'string') {
       return limitValidation;
     }
 
-    const decimalValidation = validateDecimalLength(value, 18);
+    const decimalValidation = validateDecimalLength(value, STNIBI_DECIMALS);
     if (typeof decimalValidation === 'string') {
       return decimalValidation;
     }
@@ -61,7 +76,7 @@ const UnstakeFlow = ({ stNibiBalance }: UnstakeFlowProps): React.ReactElement =>
   };
 
   const onMaxAmountClick = (): void => {
-    setValue('amount', safeFormatUnits(maxAmount, 18), {
+    setValue('amount', safeFormatUnits(maxAmount, STNIBI_DECIMALS), {
       shouldValidate: true,
     });
   };
@@ -69,7 +84,7 @@ const UnstakeFlow = ({ stNibiBalance }: UnstakeFlowProps): React.ReactElement =>
   const onSubmit = async (data: UnstakeFormData): Promise<void> => {
     setIsSubmitting(true);
     try {
-      const txData = encodeUnstake(data.amount);
+      const txData = encodeUnstake(data.amount, safe.chainId);
       await sdk.txs.send({ txs: [txData] });
       setTxFlow(undefined);
     } catch (error) {
@@ -117,7 +132,7 @@ const UnstakeFlow = ({ stNibiBalance }: UnstakeFlowProps): React.ReactElement =>
               fullWidth
             />
             <Typography variant="body2" color="text.secondary" mt={1}>
-              Available: {safeFormatUnits(maxAmount, 18)} stNIBI
+              Available: {safeFormatUnits(maxAmount, STNIBI_DECIMALS)} stNIBI
             </Typography>
           </Box>
 

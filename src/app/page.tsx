@@ -9,12 +9,28 @@ import { TxModalContext } from '@/components/tx-flow';
 import RedeemFlow from '@/components/tx-flow/flows/Redeem';
 import StakeFlow from '@/components/tx-flow/flows/Stake';
 import UnstakeFlow from '@/components/tx-flow/flows/Unstake';
+import { MIN_STAKE_AMOUNT, STNIBI_DECIMALS } from '@/config/nibiruEvm';
 import { useLoadNibiruEvm } from '@/hooks/useLoadNibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
 
 export default function Home(): ReactElement {
   const { data: nibiruData } = useLoadNibiruEvm();
   const { setTxFlow } = useContext(TxModalContext);
+
+  const isUnstakeDisabled = (): boolean => {
+    if (!nibiruData?.stNibiBalance) return true;
+    if (nibiruData.stNibiBalance === '0') return true;
+    if (nibiruData.stNibiBalance === '0x') return true;
+    if (nibiruData.stNibiBalance.trim() === '') return true;
+
+    try {
+      const balance = BigInt(nibiruData.stNibiBalance);
+      const minAmount = BigInt(MIN_STAKE_AMOUNT) / BigInt(1e12);
+      return balance < minAmount;
+    } catch {
+      return true;
+    }
+  };
 
   const onStakeClick = (): void => {
     if (nibiruData) {
@@ -30,12 +46,22 @@ export default function Home(): ReactElement {
 
   const onRedeemClick = (): void => {
     if (nibiruData) {
-      setTxFlow(<RedeemFlow canRedeem={nibiruData.canRedeem} />);
+      setTxFlow(
+        <RedeemFlow canRedeem={nibiruData.canRedeem} stNibiBalance={nibiruData.stNibiBalance} />
+      );
     }
   };
 
   return (
     <Container maxWidth="lg">
+      {/* {nibiruData?.state && (
+        <Box mb={4}>
+          <Typography variant="h6" color="white" fontWeight="bold">
+            <pre>{JSON.stringify(nibiruData.state, null, 2)}</pre>
+          </Typography>
+        </Box>
+      )} */}
+
       <Box py={4}>
         {/* Hero Section */}
         <Box textAlign="center" mb={6}>
@@ -180,7 +206,7 @@ export default function Home(): ReactElement {
                 </Stack>
 
                 <Typography variant="h3" fontWeight="bold" sx={{ mb: 3, color: '#ffffff' }}>
-                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', 18, true)}
+                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', STNIBI_DECIMALS, true)}
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
@@ -188,7 +214,7 @@ export default function Home(): ReactElement {
                 <Button
                   variant="outlined"
                   onClick={onUnstakeClick}
-                  disabled={!nibiruData?.stNibiBalance || nibiruData.stNibiBalance === '0'}
+                  disabled={isUnstakeDisabled()}
                   fullWidth
                   size="large"
                   startIcon={<AccountBalance />}
@@ -270,23 +296,27 @@ export default function Home(): ReactElement {
                   variant="contained"
                   color="success"
                   onClick={onRedeemClick}
-                  disabled={!nibiruData?.canRedeem}
+                  disabled={isUnstakeDisabled()}
                   fullWidth
                   size="large"
                   startIcon={<RedeemIcon />}
                   sx={{
                     py: 1.5,
-                    background: nibiruData?.canRedeem
-                      ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
-                      : 'rgba(99, 102, 105, 0.3)',
-                    '&:hover': {
-                      background: nibiruData?.canRedeem
-                        ? 'linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%)'
+                    background:
+                      nibiruData?.stNibiBalance && nibiruData.stNibiBalance !== '0'
+                        ? 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)'
                         : 'rgba(99, 102, 105, 0.3)',
+                    '&:hover': {
+                      background:
+                        nibiruData?.stNibiBalance && nibiruData.stNibiBalance !== '0'
+                          ? 'linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%)'
+                          : 'rgba(99, 102, 105, 0.3)',
                     },
                   }}
                 >
-                  {nibiruData?.canRedeem ? 'Redeem Available' : 'No Tokens to Redeem'}
+                  {nibiruData?.stNibiBalance && nibiruData.stNibiBalance !== '0'
+                    ? 'Redeem Available'
+                    : 'No Tokens to Redeem'}
                 </Button>
               </CardContent>
             </Card>

@@ -1902,6 +1902,11 @@
   resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-14.2.5.tgz#ed199a920efb510cfe941cd75ed38a7be21e756f"
   integrity sha512-tEQ7oinq1/CjSG9uSTerca3v4AZ+dFa+4Yu6ihaG8Ud8ddqLQgFGcnwYls13H5X5CPDPZJdYxyeMui6muOLd4g==
 
+"@nibiruchain/evm-core@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nibiruchain/evm-core/-/evm-core-0.1.0.tgz#c9e9d4eea9547ed5f19b1e3337db37668c951b20"
+  integrity sha512-ZBc9bRsupnqjvqjiO3PAC50eoIIdhaNf7qZd+9m3J2U5P7tSHGo5vE9awIa1YT5MA0+xQB6DoOZVBwhtM1Y6Tg==
+
 "@noble/curves@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.2.0.tgz#92d7e12e4e49b23105a2555c6984d41733d65c35"

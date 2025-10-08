@@ -13,6 +13,7 @@ import {
 import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk';
 import { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
+import { parseUnits } from 'viem';
 
 import NumberField from '@/components/common/NumberField';
 import TxCard from '@/components/common/TxCard';
@@ -33,7 +34,7 @@ export interface StakeFlowProps {
 }
 
 const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
-  const { sdk } = useSafeAppsSDK();
+  const { safe, sdk } = useSafeAppsSDK();
   const { setTxFlow } = useContext(TxModalContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -53,16 +54,24 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
   const maxAmount = nibiBalance;
 
   const validateAmount = (value: string): string | true => {
-    const numValue = Number(value);
-
-    if (numValue <= 0) {
+    if (!value || Number(value) <= 0) {
       return 'Amount must be greater than 0';
     }
 
-    const nibiAmount = numValue * 1e18;
+    try {
+      const amountInBaseUnits = parseUnits(value, 18);
+      const minStake = BigInt(MIN_STAKE_AMOUNT);
 
-    if (nibiAmount < MIN_STAKE_AMOUNT) {
-      return 'Minimum stake amount is 1 microNIBI (0.000001 NIBI)';
+      if (amountInBaseUnits < minStake) {
+        return 'Minimum stake amount is 1 microNIBI (0.000001 NIBI)';
+      }
+
+      if (amountInBaseUnits % minStake !== BigInt(0)) {
+        return 'Amount must be in multiples of 1 microNIBI (0.000001 NIBI)';
+      }
+    } catch {
+      // parseUnits throws if the value is not a valid number/decimal string
+      return 'Invalid amount';
     }
 
     const limitValidation = validateLimitedAmount(value, 18, maxAmount);
@@ -87,7 +96,7 @@ const StakeFlow = ({ nibiBalance }: StakeFlowProps): React.ReactElement => {
   const onSubmit = async (data: StakeFormData): Promise<void> => {
     setIsSubmitting(true);
     try {
-      const txData = encodeStake(data.amount);
+      const txData = encodeStake(data.amount, safe.chainId);
       await sdk.txs.send({ txs: [txData] });
       setTxFlow(undefined);
     } catch (error) {
