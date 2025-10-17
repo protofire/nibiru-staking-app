@@ -43,17 +43,6 @@ export const useLoadNibiruEvm = (): UseQueryResult<NibiruEvmResponse, Error> => 
           encodeGetStNibiBalance(safe.safeAddress, safe.chainId)
         );
 
-        // const privateKey = '0x0c29a4ab2d4081533a9bc5d6ad4a11e06a8e8b1281fcba5ef3da6da58c9e0db0'; // Replace with your actual private key
-        // const provider = new ethers.JsonRpcProvider('https://evm-rpc.nibiru.fi'); // Replace with your RPC endpoint
-        // const signer = new ethers.Wallet(privateKey, provider);
-        // const erisEvmCaller = erisEvmRunner(signer);
-        // const stateBz = await erisEvmCaller.state();
-        // console.debug('stateBz:', stateBz);
-        // const stateJson = Buffer.from(stateBz.slice(2), 'hex').toString('utf8');
-        // console.debug('stateJson:', stateJson);
-        // const state = JSON.parse(stateJson);
-        // console.debug('state:', state);
-
         return {
           nibiBalance: nibiBalance.toString(),
           stNibiBalance: stNibiBalanceCall || '0',

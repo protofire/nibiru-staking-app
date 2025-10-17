@@ -3,7 +3,7 @@ import { Deferrable } from '@ethersproject/properties';
 import type { SafeTransactionDataPartial } from '@safe-global/safe-core-sdk-types';
 import { Interface } from 'ethers';
 
-import { NIBIRU_EVM_ADDRESSES, ST_NIBI_TOKEN_ADDRESSES } from '@/config/nibiruEvm';
+import { NIBIRU_EVM_ADDRESSES, ST_NIBI_TOKEN_ADDRESSES, STNIBI_DECIMALS } from '@/config/nibiruEvm';
 import { safeParseUnits } from '@/utils/formatters';
 
 /**
@@ -48,7 +48,7 @@ export const encodeUnstake = (stAmount: string, chainId: number): SafeTransactio
   const functionABI = 'function unstake(uint256 stAmount)';
   const unstakeInterface = new Interface([functionABI]);
 
-  const parsedAmount = safeParseUnits(stAmount, 18)?.toString() || '0';
+  const parsedAmount = safeParseUnits(stAmount, STNIBI_DECIMALS)?.toString() || '0';
 
   const contractAddress = NIBIRU_EVM_ADDRESSES[chainId as keyof typeof NIBIRU_EVM_ADDRESSES];
   if (!contractAddress) {
@@ -99,54 +99,5 @@ export const encodeGetStNibiBalance = (
     to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
     value: '0',
     data: balanceInterface.encodeFunctionData('balanceOf', [userAddress]),
-  };
-};
-
-/**
- * Encode call to get stNIBI allowance
- * @param owner - Owner address
- * @param spender - Spender address (usually the staking contract)
- * @returns Transaction request for allowance query
- */
-export const encodeGetStNibiAllowance = (
-  owner: string,
-  spender: string,
-  chainId: number
-): Deferrable<TransactionRequest> => {
-  const functionABI =
-    'function allowance(address owner, address spender) external view returns (uint256)';
-  const allowanceInterface = new Interface([functionABI]);
-
-  return {
-    to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
-    value: '0',
-    data: allowanceInterface.encodeFunctionData('allowance', [owner, spender]),
-  };
-};
-
-/**
- * Encode approve transaction for stNIBI token
- * @param spender - Address to approve (usually the staking contract)
- * @param amount - Amount to approve in string format
- * @returns Transaction data for approval
- */
-export const encodeStNibiApprove = (
-  spender: string,
-  amount: string,
-  chainId: number
-): SafeTransactionDataPartial => {
-  if (!amount || Number(amount) <= 0) {
-    throw new Error('Amount must be greater than 0');
-  }
-
-  const functionABI = 'function approve(address spender, uint256 amount) external returns (bool)';
-  const approveInterface = new Interface([functionABI]);
-
-  const parsedAmount = safeParseUnits(amount, 18)?.toString() || '0';
-
-  return {
-    to: ST_NIBI_TOKEN_ADDRESSES[chainId as keyof typeof ST_NIBI_TOKEN_ADDRESSES],
-    value: '0',
-    data: approveInterface.encodeFunctionData('approve', [spender, parsedAmount]),
   };
 };
