@@ -14,18 +14,15 @@ import { useState, useContext } from 'react';
 
 import TxCard from '@/components/common/TxCard';
 import TxLayout from '@/components/tx-flow/common/TxLayout';
-import { STNIBI_DECIMALS } from '@/config/nibiruEvm';
-import { safeFormatUnits } from '@/utils/formatters';
 import { encodeRedeem } from '@/utils/nibiruEvm';
 
 import { TxModalContext } from '../..';
 
 export interface RedeemFlowProps {
   canRedeem: boolean;
-  stNibiBalance?: string;
 }
 
-const RedeemFlow = ({ canRedeem, stNibiBalance }: RedeemFlowProps): React.ReactElement => {
+const RedeemFlow = ({ canRedeem }: RedeemFlowProps): React.ReactElement => {
   const { sdk, safe } = useSafeAppsSDK();
   const { setTxFlow } = useContext(TxModalContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,17 +94,6 @@ const RedeemFlow = ({ canRedeem, stNibiBalance }: RedeemFlowProps): React.ReactE
             rewards. NIBI received will be converted to WNIBI.
           </Alert>
         </Box>
-
-        {stNibiBalance && canRedeem && (
-          <Box my={3}>
-            <Typography variant="body1" fontWeight="bold" mb={1}>
-              Available to Redeem:
-            </Typography>
-            <Typography variant="h5" color="primary" fontWeight="bold">
-              {safeFormatUnits(stNibiBalance, STNIBI_DECIMALS, true)} stNIBI
-            </Typography>
-          </Box>
-        )}
 
         {!canRedeem && (
           <Box my={3}>

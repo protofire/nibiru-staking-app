@@ -1,36 +1,127 @@
 'use client';
 
 import { TrendingUp, AccountBalance, Redeem as RedeemIcon } from '@mui/icons-material';
-import { Typography, Box, Button, Card, CardContent, Grid, Container, Stack } from '@mui/material';
-import { useContext, ReactElement } from 'react';
+import {
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Container,
+  Stack,
+  LinearProgress,
+} from '@mui/material';
+import { NibiruQuerier, Testnet, Mainnet } from '@nibiruchain/nibijs';
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk';
+import converter from 'bech32-converting';
+import { useContext, ReactElement, useEffect, useState, useMemo } from 'react';
 
 import TokenIcon from '@/components/common/TokenIcon';
 import { TxModalContext } from '@/components/tx-flow';
 import RedeemFlow from '@/components/tx-flow/flows/Redeem';
 import StakeFlow from '@/components/tx-flow/flows/Stake';
 import UnstakeFlow from '@/components/tx-flow/flows/Unstake';
-import { MIN_STAKE_AMOUNT, STNIBI_DECIMALS } from '@/config/nibiruEvm';
+import { STNIBI_DECIMALS, MAINNET_CHAIN_ID, NIBIRU_ERIS_ADDRESSES } from '@/config/nibiruEvm';
 import { useLoadNibiruEvm } from '@/hooks/useLoadNibiruEvm';
 import { safeFormatUnits } from '@/utils/formatters';
+
+interface UnbondRequest {
+  id: number;
+  shares: string;
+  state: string;
+  batch: {
+    id: number;
+    reconciled: boolean;
+    total_shares: string;
+    utoken_unclaimed: string;
+    est_unbond_end_time: number;
+  } | null;
+  pending: {
+    id: number;
+    ustake_to_burn: string;
+    est_unbond_start_time: number;
+  } | null;
+}
 
 export default function Home(): ReactElement {
   const { data: nibiruData } = useLoadNibiruEvm();
   const { setTxFlow } = useContext(TxModalContext);
+  const { safe } = useSafeAppsSDK();
+  const [unbondRequests, setUnbondRequests] = useState<UnbondRequest[]>([]);
+  const [querier, setQuerier] = useState<NibiruQuerier | null>(null);
 
-  const isUnstakeDisabled = (): boolean => {
+  useEffect(() => {
+    let isMounted = true;
+    const connectQuerier = async (): Promise<void> => {
+      if (!safe?.chainId) {
+        setQuerier(null);
+        return;
+      }
+      const network = safe.chainId === MAINNET_CHAIN_ID ? Mainnet() : Testnet(2);
+      const q = await NibiruQuerier.connect(network.endptTm);
+      if (isMounted) setQuerier(q);
+    };
+    connectQuerier();
+    return () => {
+      isMounted = false;
+    };
+  }, [safe?.chainId]);
+
+  useEffect(() => {
+    if (!querier || !safe?.chainId || !safe?.safeAddress) return;
+
+    const fetchUnbondRequests = async (): Promise<void> => {
+      try {
+        const result = await querier.wasmClient.queryContractSmart(
+          NIBIRU_ERIS_ADDRESSES[safe?.chainId as keyof typeof NIBIRU_ERIS_ADDRESSES],
+          {
+            unbond_requests_by_user_details: { user: converter('nibi').toBech32(safe.safeAddress) },
+          }
+        );
+        if (Array.isArray(result)) {
+          setUnbondRequests(result as UnbondRequest[]);
+        }
+      } catch (error) {
+        console.error('Error fetching unbond requests:', error);
+      }
+    };
+
+    void fetchUnbondRequests();
+    const intervalId = setInterval(() => {
+      void fetchUnbondRequests();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [querier, safe?.chainId, safe?.safeAddress]);
+
+  const isUnstakeDisabled = useMemo((): boolean => {
     if (!nibiruData?.stNibiBalance) return true;
     if (nibiruData.stNibiBalance === '0') return true;
     if (nibiruData.stNibiBalance === '0x') return true;
     if (nibiruData.stNibiBalance.trim() === '') return true;
 
-    try {
-      const balance = BigInt(nibiruData.stNibiBalance);
-      const minAmount = BigInt(MIN_STAKE_AMOUNT) / BigInt(1e12);
-      return balance < minAmount;
-    } catch {
-      return true;
-    }
-  };
+    const balance = BigInt(nibiruData.stNibiBalance);
+    return !(balance > BigInt(0));
+  }, [nibiruData]);
+
+  const isRedeemDisabled = useMemo((): boolean => {
+    if (unbondRequests.length === 0) return true;
+    // Check if any request is claimable.
+    // Assuming 'CLAIMABLE' state or if unbond time has passed.
+    // Based on user request: "disable redeem if there are no anything"
+    // If we strictly follow "no anything", then length === 0 is enough.
+    // However, usually redeem is only for finished unbonding.
+    // Let's check if any request has finished unbonding.
+    const nowSec = Math.floor(Date.now() / 1000);
+    const hasClaimable = unbondRequests.some((req) => {
+      if (req.batch) {
+        return req.batch.est_unbond_end_time <= nowSec;
+      }
+      return false;
+    });
+    return !hasClaimable;
+  }, [unbondRequests]);
 
   const onStakeClick = (): void => {
     if (nibiruData) {
@@ -46,9 +137,7 @@ export default function Home(): ReactElement {
 
   const onRedeemClick = (): void => {
     if (nibiruData) {
-      setTxFlow(
-        <RedeemFlow canRedeem={nibiruData.canRedeem} stNibiBalance={nibiruData.stNibiBalance} />
-      );
+      setTxFlow(<RedeemFlow canRedeem={nibiruData.canRedeem} />);
     }
   };
 
@@ -214,7 +303,7 @@ export default function Home(): ReactElement {
                 <Button
                   variant="outlined"
                   onClick={onUnstakeClick}
-                  disabled={isUnstakeDisabled()}
+                  disabled={isUnstakeDisabled}
                   fullWidth
                   size="large"
                   startIcon={<AccountBalance />}
@@ -296,7 +385,7 @@ export default function Home(): ReactElement {
                   variant="contained"
                   color="success"
                   onClick={onRedeemClick}
-                  disabled={isUnstakeDisabled()}
+                  disabled={isRedeemDisabled}
                   fullWidth
                   size="large"
                   startIcon={<RedeemIcon />}
@@ -322,6 +411,118 @@ export default function Home(): ReactElement {
             </Card>
           </Grid>
         </Grid>
+        {/* Unstake Queue Summary (from unbondRequests) */}
+        {unbondRequests.length > 0 && (
+          <Box mt={2}>
+            <Card
+              sx={{
+                background:
+                  'linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                border: '1px solid rgba(255,255,255,0.04)',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+                  Unstake Queue
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {unbondRequests.length} entries
+                </Typography>
+
+                <Stack spacing={1}>
+                  {unbondRequests.map((req) => {
+                    const amount = req.shares; // Assuming shares is the amount
+                    // Determine timestamps
+                    let start = 0;
+                    let end = 0;
+                    if (req.batch) {
+                      // If in batch, it's unbonding.
+                      // We don't have explicit start time in batch from the JSON example,
+                      // but we have est_unbond_end_time.
+                      // We can try to infer start or just show progress if we had start.
+                      // If we don't have start, maybe just show "Unbonding..."
+                      end = req.batch.est_unbond_end_time * 1000;
+                      // If we don't have start, we can't show accurate progress bar relative to start.
+                      // But maybe we can assume 21 days unbonding period?
+                      // Or just show time remaining.
+                      start = end - 21 * 24 * 60 * 60 * 1000; // Approximate start
+                    } else if (req.pending) {
+                      // Pending
+                      start = Date.now(); // It's pending now
+                      end = req.pending.est_unbond_start_time * 1000;
+                    }
+
+                    const now = Date.now();
+                    let pct = 0;
+                    if (end > start) {
+                      pct = ((now - start) / (end - start)) * 100;
+                      if (pct < 0) pct = 0;
+                      if (pct > 100) pct = 100;
+                    }
+
+                    return (
+                      <Box
+                        key={req.id}
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          p: 1,
+                          borderRadius: 1,
+                          background: 'rgba(255,255,255,0.01)',
+                        }}
+                      >
+                        <Box sx={{ width: '100%' }}>
+                          <Box display="flex" justifyContent="space-between">
+                            <Typography variant="subtitle2" sx={{ fontWeight: '600' }}>
+                              {req.state} — {safeFormatUnits(amount, STNIBI_DECIMALS, true)} stNIBI
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              ID: {req.id}
+                            </Typography>
+                          </Box>
+
+                          {req.batch && (
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              Unlocks:{' '}
+                              {new Date(req.batch.est_unbond_end_time * 1000).toLocaleString()}
+                            </Typography>
+                          )}
+                          {req.pending && (
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              Est. Start:{' '}
+                              {new Date(req.pending.est_unbond_start_time * 1000).toLocaleString()}
+                            </Typography>
+                          )}
+
+                          {/* Progress line */}
+                          <Box sx={{ mt: 1 }}>
+                            <LinearProgress
+                              variant="determinate"
+                              value={pct}
+                              sx={{
+                                height: 8,
+                                borderRadius: 1,
+                                backgroundColor: 'rgba(255,255,255,0.04)',
+                              }}
+                            />
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                              {req.state === 'PENDING'
+                                ? 'Waiting to start unbonding'
+                                : `${pct.toFixed(0)}% to unlock`}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Box>
+        )}
       </Box>
     </Container>
   );
