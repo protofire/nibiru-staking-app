@@ -12,7 +12,7 @@ export const NIBIRU_EVM_ADDRESSES = {
 };
 
 export const NIBIRU_ERIS_ADDRESSES = {
-  6900: 'nibi1keqw4dllsczlldd7pmzp25wyl04fw5anh3wxljhg4fjuqj9xnxuqa82rpg',
+  6900: 'nibi1udqqx30cw8nwjxtl4l28ym9hhrp933zlq8dqxfjzcdhvl8y24zcqpzmh8m',
   6911: 'nibi1keqw4dllsczlldd7pmzp25wyl04fw5anh3wxljhg4fjuqj9xnxuqa82rpg',
 };
 
