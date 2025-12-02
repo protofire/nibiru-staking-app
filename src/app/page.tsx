@@ -1,6 +1,11 @@
 'use client';
 
-import { TrendingUp, AccountBalance, Redeem as RedeemIcon, InfoOutlined } from '@mui/icons-material';
+import {
+  TrendingUp,
+  AccountBalance,
+  Redeem as RedeemIcon,
+  InfoOutlined,
+} from '@mui/icons-material';
 import {
   Typography,
   Box,
@@ -505,13 +510,21 @@ export default function Home(): ReactElement {
                           </Box>
 
                           {req.batch && (
-                            <Typography variant="caption" display="block" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                            <Typography
+                              variant="caption"
+                              display="block"
+                              sx={{ color: 'rgba(255,255,255,0.7)' }}
+                            >
                               Unlocks:{' '}
                               {new Date(req.batch.est_unbond_end_time * 1000).toLocaleString()}
                             </Typography>
                           )}
                           {req.pending && (
-                            <Typography variant="caption" display="block" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                            <Typography
+                              variant="caption"
+                              display="block"
+                              sx={{ color: 'rgba(255,255,255,0.7)' }}
+                            >
                               Est. Start:{' '}
                               {new Date(req.pending.est_unbond_start_time * 1000).toLocaleString()}
                             </Typography>
@@ -528,7 +541,10 @@ export default function Home(): ReactElement {
                                 backgroundColor: 'rgba(255,255,255,0.04)',
                               }}
                             />
-                            <Typography variant="caption" sx={{ mt: 0.5, color: 'rgba(255,255,255,0.7)' }}>
+                            <Typography
+                              variant="caption"
+                              sx={{ mt: 0.5, color: 'rgba(255,255,255,0.7)' }}
+                            >
                               {req.state === 'PENDING'
                                 ? 'Waiting to start unbonding'
                                 : `${Math.max(0, Math.ceil((end - now) / (24 * 60 * 60 * 1000)))} days to Redeem left`}
