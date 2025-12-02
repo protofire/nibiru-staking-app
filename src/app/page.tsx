@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, AccountBalance, Redeem as RedeemIcon } from '@mui/icons-material';
+import { TrendingUp, AccountBalance, Redeem as RedeemIcon, InfoOutlined } from '@mui/icons-material';
 import {
   Typography,
   Box,
@@ -11,6 +11,7 @@ import {
   Container,
   Stack,
   LinearProgress,
+  IconButton,
 } from '@mui/material';
 import { NibiruQuerier, Testnet, Mainnet } from '@nibiruchain/nibijs';
 import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk';
@@ -154,21 +155,40 @@ export default function Home(): ReactElement {
       <Box py={4}>
         {/* Hero Section */}
         <Box textAlign="center" mb={6}>
-          <Typography
-            variant="h2"
-            component="h1"
-            gutterBottom
-            sx={{
-              background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontWeight: 'bold',
-              mb: 2,
-            }}
-          >
-            Nibiru Liquid Staking
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+            <Typography
+              variant="h2"
+              component="h1"
+              gutterBottom
+              sx={{
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #1de9b6 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 'bold',
+                mb: 2,
+              }}
+            >
+              Nibiru Liquid Staking
+            </Typography>
+            <IconButton
+              component="a"
+              href="https://nibiru.fi/docs/use/stake.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: '#1de9b6',
+                '&:hover': {
+                  color: '#0ea5e9',
+                  background: 'rgba(29, 233, 182, 0.1)',
+                },
+                mb: 2,
+              }}
+              aria-label="View staking documentation"
+            >
+              <InfoOutlined />
+            </IconButton>
+          </Box>
           <Typography
             variant="h6"
             color="text.secondary"
@@ -225,7 +245,7 @@ export default function Home(): ReactElement {
                   fontWeight="bold"
                   sx={{ mb: 3, color: 'var(--color-primary-main)' }}
                 >
-                  {safeFormatUnits(nibiruData?.nibiBalance || '0', 18, true)}
+                  {safeFormatUnits(nibiruData?.nibiBalance || '0', 18, true)} NIBI
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
@@ -282,7 +302,7 @@ export default function Home(): ReactElement {
                       justifyContent: 'center',
                     }}
                   >
-                    <TokenIcon logoUri="/proto-logo.svg" tokenSymbol="stNIBI" />
+                    <TokenIcon logoUri="/logo192.png" tokenSymbol="stNIBI" />
                   </Box>
                   <Box>
                     <Typography variant="h6" fontWeight="bold">
@@ -295,7 +315,7 @@ export default function Home(): ReactElement {
                 </Stack>
 
                 <Typography variant="h3" fontWeight="bold" sx={{ mb: 3, color: '#ffffff' }}>
-                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', STNIBI_DECIMALS, true)}
+                  {safeFormatUnits(nibiruData?.stNibiBalance || '0', STNIBI_DECIMALS, true)} stNIBI
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
@@ -427,7 +447,7 @@ export default function Home(): ReactElement {
                   Unstake Queue
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.7)' }}>
                   {unbondRequests.length} entries
                 </Typography>
 
@@ -479,19 +499,19 @@ export default function Home(): ReactElement {
                             <Typography variant="subtitle2" sx={{ fontWeight: '600' }}>
                               {req.state} — {safeFormatUnits(amount, STNIBI_DECIMALS, true)} stNIBI
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
                               ID: {req.id}
                             </Typography>
                           </Box>
 
                           {req.batch && (
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography variant="caption" display="block" sx={{ color: 'rgba(255,255,255,0.7)' }}>
                               Unlocks:{' '}
                               {new Date(req.batch.est_unbond_end_time * 1000).toLocaleString()}
                             </Typography>
                           )}
                           {req.pending && (
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography variant="caption" display="block" sx={{ color: 'rgba(255,255,255,0.7)' }}>
                               Est. Start:{' '}
                               {new Date(req.pending.est_unbond_start_time * 1000).toLocaleString()}
                             </Typography>
@@ -508,10 +528,10 @@ export default function Home(): ReactElement {
                                 backgroundColor: 'rgba(255,255,255,0.04)',
                               }}
                             />
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                            <Typography variant="caption" sx={{ mt: 0.5, color: 'rgba(255,255,255,0.7)' }}>
                               {req.state === 'PENDING'
                                 ? 'Waiting to start unbonding'
-                                : `${pct.toFixed(0)}% to unlock`}
+                                : `${Math.max(0, Math.ceil((end - now) / (24 * 60 * 60 * 1000)))} days to Redeem left`}
                             </Typography>
                           </Box>
                         </Box>
