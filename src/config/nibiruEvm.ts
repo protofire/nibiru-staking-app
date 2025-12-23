@@ -17,8 +17,8 @@ export const NIBIRU_ERIS_ADDRESSES = {
 };
 
 export const NIBIRU_TX_SERVICE_URL = {
-  6900: 'https://transaction.safe.nibiru.fi',
-  6911: 'https://transaction-testnet.safe.nibiru.fi',
+  6900: 'https://transaction.staging.safe.nibiru.fi',
+  6911: 'https://transaction-testnet.staging.safe.nibiru.fi',
 };
 
 // Token decimals
